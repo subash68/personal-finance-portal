@@ -1,0 +1,98 @@
+syntax = "proto3";
+option go_package = "token/";
+package token;
+
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+//definition for swagger support
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+  info: {
+    title: "ATE Token Service";
+    version: "1.0";
+    contact: {
+      name: "ATE token service project";
+      url: "hyperl.io";
+      email: "subash@hyperl.io";
+    };
+  };
+  schemes: HTTP;
+  consumes: "application/json";
+  produces: "applications/json";
+  responses: {
+    key: "404";
+    value: {
+      description: "Returned when the resource does not exist.";
+      schema: {
+        json_schema: {
+          type: STRING;
+        }
+      }
+    }
+  }
+};
+
+service TokenService {
+  rpc validate(ValidateRequest) returns (ValidateResponse) {
+    option (google.api.http) = {
+      post: "/validate"
+      body: "*"
+    };
+  }
+
+  rpc generate(GenerateRequest) returns (GenerateResponse) {
+    option (google.api.http) = {
+      post: "/generate"
+      body: "*"
+    };
+  }
+
+  rpc refresh(RefreshRequest) returns (RefreshResponse) {
+    option (google.api.http) = {
+      post: "/refresh"
+      body: "*"
+    };
+  }
+}
+
+
+message voidNoParams {}
+
+message Token {
+  bool status = 1;
+}
+
+// this should send for which user [admin, shop, driver, user]
+message GenerateRequest {
+  int64 id = 1;
+  string fullname = 2;
+  string email = 3;
+  int32 userType = 4;
+}
+
+message GenerateResponse {
+  string token = 1;
+  int64 id = 2;
+}
+
+
+message ValidateRequest {
+  string token = 1;
+}
+
+message ValidateResponse {
+  string message = 1;
+  int64 id = 2;
+  string email = 3;
+  int32 userType = 4;
+  bool status = 5;
+}
+
+message RefreshRequest {
+  string token = 1;
+}
+
+message RefreshResponse {
+  string token = 1;
+  int64 id = 2;
+}
